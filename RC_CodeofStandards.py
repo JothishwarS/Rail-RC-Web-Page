@@ -12,23 +12,13 @@ def bs2005_actual_dia():
                 "</div>", unsafe_allow_html=True)
 
 def bs2005_min_u_bar():
-    st.markdown("<h3 style='text-align:center;'>Min U-bar Leg Values – BS8666:2005</h3>", unsafe_allow_html=True)
-
-    # Raw GitHub PDF link
+    st.markdown("<h3 style='text-align:center;'>Min U-bar Leg Values - BS8666:2005</h3>", unsafe_allow_html=True)
     raw_pdf = "https://raw.githubusercontent.com/JothishwarS/Rail-RC-Web-Page/90ae0691b4786735d50bf779745f209cb70a7703/BS8666-2005%20MIn%20legs%20of%20U-bars.pdf"
-
-    # Use Google Docs Viewer for embedding
     viewer_url = f"https://docs.google.com/viewer?embedded=true&url={raw_pdf}"
-
-    # Centered iframe with padding
-    st.markdown(f"""
-        <div style='display: flex; justify-content: center; padding: 10px;'>
-            <iframe src="{viewer_url}" width="750" height="750" style="border: none;"></iframe>
-        </div>
-        <p style='text-align:center;'>
-            <a href="{raw_pdf}" target="_blank" download>📥 Download PDF</a>
-        </p>
-    """, unsafe_allow_html=True)
+    st.markdown(f"<div style='display:flex; justify-content:center;'>"
+                f"<iframe src='{viewer_url}' width='750' height='750'></iframe></div>",
+                unsafe_allow_html=True)
+    st.markdown(f"<p style='text-align:center;'><a href='{raw_pdf}' download>📥 Download PDF</a></p>", unsafe_allow_html=True) 
 
 def bs2005_link_sc():
     st.markdown("<h3 style='text-align:center;'>Link SC Min Leg Values - BS8666:2005</h3>", unsafe_allow_html=True)
