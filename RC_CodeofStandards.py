@@ -18,7 +18,7 @@ def bs2005_min_u_bar():
     st.markdown(f"<div style='display:flex; justify-content:center;'>"
                 f"<iframe src='{viewer_url}' width='750' height='750'></iframe></div>",
                 unsafe_allow_html=True)
-    st.markdown(f"<p style='text-align:center;'><a href='{raw_pdf}' download>📥 Download PDF</a></p>", unsafe_allow_html=True)
+    st.markdown(f"<p style='text-align:center;'><a href='{raw_pdf}' download>📥 Download PDF</a></p>", unsafe_allow_html=True) 
 
 def bs2005_link_sc():
     st.markdown("<h3 style='text-align:center;'>Link SC Min Leg Values - BS8666:2005</h3>", unsafe_allow_html=True)
