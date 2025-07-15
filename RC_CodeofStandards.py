@@ -252,10 +252,99 @@ def canada_lap_values():
 
     except Exception as e:
         st.error(f"❌ Could not load Excel:\n{e}")
+
+        # ---------- Pages for ACI Standards ----------
+def aci_actual_dia():
+    st.markdown("<h3 style='text-align:center;'>Actual Dia - ACI Standards</h3>", unsafe_allow_html=True)
+    st.markdown("<div style='text-align:center;'>"
+                "<img src='https://raw.githubusercontent.com/JothishwarS/Rail-RC-Web-Page/1fbe0c10a1ff4d725361b4b12d0f80ab93f5e85a/Actual%20dia%20for%20ACI%20Code.jpg' width='400'>"
+                "</div>", unsafe_allow_html=True)
+
+def aci_min_bar_length():
+    st.markdown("<h3 style='text-align:center;'>Minimum Bar Length - ACI Standards</h3>", unsafe_allow_html=True)
+    raw_pdf = "https://raw.githubusercontent.com/JothishwarS/Rail-RC-Web-Page/1fbe0c10a1ff4d725361b4b12d0f80ab93f5e85a/Minimum%20Bar%20length.pdf"
+    viewer_url = f"https://docs.google.com/viewer?embedded=true&url={raw_pdf}"
+    st.markdown(f"<div style='display:flex; justify-content:center;'>"
+                f"<iframe src='{viewer_url}' width='750' height='750'></iframe></div>",
+                unsafe_allow_html=True)
+    st.markdown(f"<p style='text-align:center;'><a href='{raw_pdf}' download>📥 Download PDF</a></p>", unsafe_allow_html=True)
+
+def aci_lap_values():
+    st.markdown("<h3 style='text-align:center;'>Lap & Anchorage Values - ACI Standards</h3>", unsafe_allow_html=True)
+
+    excel_url = "https://raw.githubusercontent.com/JothishwarS/Rail-RC-Web-Page/302205e1a896cf15b4043e8c7fc525e316d15ce2/Lap%20%26%20Anchorage%20for%20ACI.xlsx"
+    options = {
+        "Lap & Anchorage Values - f'c = 3000 psi": ("Table 1", "A1:F23", None),
+        "Lap & Anchorage Values - f'c = 4000 psi": ("Table 1", "A25:F44", "A24"),
+        "Lap & Anchorage Values - f'c = 5000 psi": ("Table 1", "A49:F71", None),
+        "Lap & Anchorage Values - f'c = 6000 psi": ("Table 2", "A1:F23", None),
+        "Lap & Anchorage Values - f'c = 7000 psi": ("Table 2", "A25:F44", "A24"),
+        "Lap & Anchorage Values - f'c = 8000 psi": ("Table 2", "A49:F71", None),
+    }
+
+    selected_option = st.selectbox("Select Value Type", list(options.keys()))
+    sheet_name, cell_range, heading_cell = options[selected_option]
+
+    try:
+        response = requests.get(excel_url)
+        response.raise_for_status()
+        wb = load_workbook(BytesIO(response.content), data_only=True)
+        ws = wb[sheet_name]
+
+        if heading_cell:
+            heading_text = ws[heading_cell].value
+            if heading_text:
+                st.markdown(f"<div style='text-align:center; font-weight:bold; background-color:#FFECB3; padding:10px; margin-bottom:10px;'>{heading_text}</div>", unsafe_allow_html=True)
+
+        data = ws[cell_range]
+        table = [[cell.value for cell in row] for row in data]
+
+        raw_columns = table[0]
+        clean_columns = []
+        seen = {}
+        for col in raw_columns:
+            if col is None:
+                col = "Unnamed"
+            col_str = str(col).strip()
+            count = seen.get(col_str, 0)
+            seen[col_str] = count + 1
+            clean_columns.append(f"{col_str}_{count}" if count else col_str)
+
+        # Create DataFrame
+        df = pd.DataFrame(table[1:], columns=clean_columns)
+        df.replace(["None", "nan", None, pd.NA, float('nan')], "", inplace=True)
+
+        # Style and display
+        styled_df = df.style.set_table_styles([
+            {'selector': 'th', 'props': [('background-color', '#FFCDD2'), ('text-align', 'center'), ('border', '1px solid black')]},
+            {'selector': 'td', 'props': [('text-align', 'center'), ('border', '1px solid gray')]}
+        ]).set_properties(**{'padding': '8px'}).hide(axis='index')
+
+        st.markdown("<h4 style='text-align:center;'>Lap & Anchorage Table</h4>", unsafe_allow_html=True)
+        html_table = styled_df.to_html()
+        styled_html = (
+            "<div style='display:flex; justify-content:center;'>"
+            "<div style='border:1px solid #ccc; padding:10px;'>"
+            + html_table +
+            "</div></div>"
+        )
+        st.markdown(styled_html, unsafe_allow_html=True)
+
+    except Exception as e:
+        st.error(f"❌ Could not load Excel or parse range:\n{e}")
+
+def aci_shape_codes():
+    st.markdown("<h3 style='text-align:center;'>Shape Codes - ACI Standards</h3>", unsafe_allow_html=True)
+    raw_pdf = "https://raw.githubusercontent.com/JothishwarS/Rail-RC-Web-Page/1fbe0c10a1ff4d725361b4b12d0f80ab93f5e85a/Shape%20codes%20for%20ACI%20Code.pdf"
+    viewer_url = f"https://docs.google.com/viewer?embedded=true&url={raw_pdf}"
+    st.markdown(f"<div style='display:flex; justify-content:center;'>"
+                f"<iframe src='{viewer_url}' width='750' height='750'></iframe></div>",
+                unsafe_allow_html=True)
+    st.markdown(f"<p style='text-align:center;'><a href='{raw_pdf}' download>📥 Download PDF</a></p>", unsafe_allow_html=True)
 # ---------- Main App ----------
 def main():
     st.sidebar.title("Standard Family")
-    major_standard = st.sidebar.selectbox("Choose Standard Family:", ["Select...", "BS Code", "Canada Standards"])
+    major_standard = st.sidebar.selectbox("Choose Standard Family:", ["Select...", "BS Code", "ACI Standards", "Canada Standards"])
 
     if major_standard == "BS Code":
         st.sidebar.title("BS Code Tools")
@@ -362,6 +451,24 @@ def main():
         else:
             st.markdown("Please choose a BS standard from the selector.")
 
+    elif major_standard == "ACI Standards":
+        st.sidebar.title("ACI Standards Tools")
+        option = st.sidebar.selectbox("Select tool:", [
+            "Actual Dia",
+            "Min Bar Length",
+            "Lap & Anchorage Values",
+            "Shape Codes"
+        ])
+
+        if option == "Actual Dia":
+            aci_actual_dia()
+        elif option == "Min Bar Length":
+            aci_min_bar_length()
+        elif option == "Lap & Anchorage Values":
+            aci_lap_values()
+        elif option == "Shape Codes":
+            aci_shape_codes()
+
     elif major_standard == "Canada Standards":
         st.sidebar.title("Canada Standards Tools")
         option = st.sidebar.selectbox("Select tool:", [
@@ -381,7 +488,7 @@ def main():
 
     else:
         st.title("Welcome to The Rail Structures RC Code of Standards Web Page")
-        st.write("Please choose a code family (BS Code or Canada Standards) to begin.")
+        st.write("Please choose a code family (BS Code, ACI Standards, or Canada Standards) to begin.")
 
 if __name__ == "__main__":
     main()
