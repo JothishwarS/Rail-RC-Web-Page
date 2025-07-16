@@ -473,14 +473,12 @@ def main():
         st.sidebar.title("Canada Standards Tools")
         option = st.sidebar.selectbox("Select tool:", [
             "Actual Dia",
-            "Min U-bar Leg Values",
             "Shape Code List",
             "Lap & Anchorage Values"
         ])
         if option == "Actual Dia":
             canada_actual_dia()
-        elif option == "Min U-bar Leg Values":
-            st.info("🔧 Min U-bar Leg Values for Canada Standards will be added shortly.")
+
         elif option == "Shape Code List":
             canada_shape_codes()
         elif option == "Lap & Anchorage Values":
